@@ -17,13 +17,20 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier'],
   rules: {
-    'prettier/prettier': 2,
+    'prettier/prettier': [
+      'error',
+      {
+        endOfLine: 'auto',
+      },
+    ],
     'no-console': 'off',
     'no-var': 'error',
     'prefer-const': 'warn',
-    'no-inferrable-types': 0,
     'no-undef': 'warn',
-    // 'no-inferrable-types': false,
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': 'off',
+    '@typescript-eslint/no-inferrable-types': 'off',
+    // '@typescript-eslint/await-thenable': 'warn',
     semi: ['error', 'always'],
     quotes: ['error', 'single'],
     indent: ['error', 2],
