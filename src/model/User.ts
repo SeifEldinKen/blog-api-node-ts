@@ -13,3 +13,5 @@ interface User {
   isAdmin?: Role;
   isActive: boolean;
 }
+
+export { User };

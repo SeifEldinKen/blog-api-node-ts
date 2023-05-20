@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { ApiError } from '../error/ApiError';
+import { HTTP_STATUS_CODE } from '../utils/constants/HttpStatusCode';
 
 const notFoundHandlerMiddleware = (
   request: Request,
@@ -8,7 +9,7 @@ const notFoundHandlerMiddleware = (
 ) => {
   const error: ApiError = new ApiError();
 
-  error.statusCode = 404;
+  error.statusCode = HTTP_STATUS_CODE.NOT_FOUND;
   error.message =
     'ohh you are lost, read the API documentation to find your way back home 😂';
   error.status = 'fail';
