@@ -5,13 +5,13 @@ interface User {
   id?: string;
   username: string;
   email: string;
-  passwordHash: string;
+  password_hashed: string;
   gender?: Gender;
-  registeredAt?: Date;
-  lastLogin?: Date;
-  updatedAt?: Date;
-  isAdmin?: Role;
-  isActive: boolean;
+  registered_at?: Date;
+  last_login?: Date;
+  updated_at?: Date;
+  is_admin?: Role;
+  is_active: boolean;
 }
 
 export { User };

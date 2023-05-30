@@ -1,13 +1,23 @@
 import { Router } from 'express';
-import { registerController } from '../controller/authController';
+import {
+  registerController,
+  loginWithEmailController,
+  loginWithUsernameController,
+} from '../controller/authController';
+import { checkTokenMiddleware } from '../middleware/checkTokenMiddleware';
 
 // --> init router
 const authRouter: Router = Router();
 
+// -->
+// const authRegisterController = new AuthRegisterController();
+
 //* GET *//
 
 //* POST *//
-authRouter.post('/', registerController);
+authRouter.post('/api/v1/auth/register', registerController);
+authRouter.post('/api/v1/auth/login/email', loginWithEmailController);
+authRouter.post('/api/v1/auth/login/username', loginWithUsernameController);
 
 //* PUT *//
 

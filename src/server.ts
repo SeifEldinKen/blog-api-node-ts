@@ -1,17 +1,26 @@
-import express, { Application, Request, Response, response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import {
   globalErrorHandlerMiddleware,
   notFoundHandlerMiddleware,
-} from './middleware/errorHandler';
+} from './middleware/errorHandlerMiddleware';
 import { authRouter } from './router/authRouter';
 import { HTTP_STATUS_CODE } from './utils/constants/HttpStatusCode';
 import { pool as db } from './database/database';
+import cors from 'cors';
+import config from './utils/config';
 
 // --> create instance
 const app: Application = express();
 
 (async () => {
+  // --> middleware
+  app.use(cors());
   app.use(express.json());
+  // --> logger middleware
+  app.use((request: Request, response: Response, next: NextFunction) => {
+    console.log(`New Request: ${request.path} -body: ${request.body}`);
+    next();
+  });
 
   try {
     const client = await db.connect();
@@ -23,32 +32,21 @@ const app: Application = express();
     console.error(error);
   }
 
-  // try {
-  //   const client: PoolClient = await pool.connect();
-  //   console.log('database connected');
-
-  //   const createUsersTableSQL: string = 'CREATE TABLE "users" ()';
-
-  //   const { rows } = await client.query(createUsersTableSQL);
-
-  //   console.log(rows[0]);
-  // } catch (error) {
-  //   console.log(`database connection filed: ${error}`);
-  // } finally {
-  //   await pool.end();
-  // }
-
   // --> Mount Routers
-  app.use('/api/v1/auth/register', authRouter);
+  app.use('/', authRouter);
 
-  app.get('/', (request: Request, response: Response) => {
+  console.log('Hello, World! 🔥');
+
+  app.get('/healthz', (request: Request, response: Response) => {
     response.status(HTTP_STATUS_CODE.OK).json({ message: 'Hello, World ⭐' });
   });
 
+  // --> error handler middleware
   app.use('*', notFoundHandlerMiddleware);
   app.use(globalErrorHandlerMiddleware);
 
-  app.listen(3000, () => {
-    console.log('Server is running on: http://localhost:3000/');
+  const PORT: number = Number(config.port) || 3008;
+  app.listen(PORT, () => {
+    console.log(`Server is running on: http://localhost:${PORT}/healthz`);
   });
 })();

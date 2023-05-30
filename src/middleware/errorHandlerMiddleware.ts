@@ -27,8 +27,12 @@ const globalErrorHandlerMiddleware = (
   // const errorMessage: string = error.message || "Whoops!! something went wrong";
   // error.message || "Whoops!! something went wrong";
   // error.statusCode || 500
-
-  response.status(404).json({
+  console.error({
+    message: error.message,
+    statusCode: error.statusCode,
+    status: error.status,
+  });
+  response.status(error.statusCode || HTTP_STATUS_CODE.NOT_FOUND).json({
     error,
   });
 };
