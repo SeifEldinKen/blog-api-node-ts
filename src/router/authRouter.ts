@@ -4,7 +4,7 @@ import {
   loginWithEmailController,
   loginWithUsernameController,
 } from '../controller/authController';
-import { checkTokenMiddleware } from '../middleware/checkTokenMiddleware';
+import { authHandlerMiddleware } from '../middleware/authenticationMiddleware';
 
 // --> init router
 const authRouter: Router = Router();

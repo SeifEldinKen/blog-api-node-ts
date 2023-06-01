@@ -5,6 +5,7 @@ import { ApiError } from '../error/ApiError';
 import { Gender } from '../utils/enum/Gender';
 import { User } from '../model/User';
 import { UserResponse } from '../model/UserResponse';
+import { JwtObject } from '../model/JwtObject';
 
 const registerController = async (request: Request, response: Response) => {
   try {
@@ -48,11 +49,13 @@ const registerController = async (request: Request, response: Response) => {
         );
 
         // --> 5) generate toke
-        const token: string = await userService.generateToke(
+        const payload: JwtObject = {
           email,
           username,
-          passwordHashed
-        );
+          passwordHashed,
+        };
+
+        const token: string = await userService.generateToke(payload);
 
         // --> 6) insert new user in database
         const newUser: User = await userService.createUser(
@@ -126,11 +129,13 @@ const loginWithEmailController = async (
         }
 
         // --> 6) generate toke
-        const token: string = await userService.generateToke(
-          email,
-          currentUser.username,
-          currentUser.password_hashed
-        );
+        const payload: JwtObject = {
+          email: currentUser.email,
+          username: currentUser.username,
+          passwordHashed: currentUser.password_hashed,
+        };
+
+        const token: string = await userService.generateToke(payload);
 
         // --> 7) send response to cline side
         return response.status(HTTP_STATUS_CODE.OK).json({
@@ -189,11 +194,13 @@ const loginWithUsernameController = async (
       }
 
       // --> 6) generate toke
-      const token: string = await userService.generateToke(
-        currentUser.email,
-        username,
-        currentUser.password_hashed
-      );
+      const payload: JwtObject = {
+        email: currentUser.email,
+        username: currentUser.username,
+        passwordHashed: currentUser.password_hashed,
+      };
+
+      const token: string = await userService.generateToke(payload);
 
       // --> 7) send response to cline side
       return response.status(HTTP_STATUS_CODE.OK).json({

@@ -8,6 +8,7 @@ import { HTTP_STATUS_CODE } from './utils/constants/HttpStatusCode';
 import { pool as db } from './database/database';
 import cors from 'cors';
 import config from './utils/config';
+import { authHandlerMiddleware } from './middleware/authenticationMiddleware';
 
 // --> create instance
 const app: Application = express();
@@ -37,9 +38,13 @@ const app: Application = express();
 
   console.log('Hello, World! 🔥');
 
-  app.get('/healthz', (request: Request, response: Response) => {
-    response.status(HTTP_STATUS_CODE.OK).json({ message: 'Hello, World ⭐' });
-  });
+  app.get(
+    '/healthz',
+    authHandlerMiddleware,
+    (request: Request, response: Response) => {
+      response.status(HTTP_STATUS_CODE.OK).json({ message: 'Hello, World ⭐' });
+    }
+  );
 
   // --> error handler middleware
   app.use('*', notFoundHandlerMiddleware);

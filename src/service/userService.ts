@@ -1,12 +1,13 @@
+import { HTTP_STATUS_CODE } from '../utils/constants/HttpStatusCode';
 import { QueryResult } from 'pg';
 import { pool as db } from '../database/database';
-import { User } from '../model/User';
+import { JwtObject } from '../model/JwtObject';
+import { ApiError } from '../error/ApiError';
 import { Gender } from '../utils/enum/Gender';
+import { User } from '../model/User';
 import bcrypt from 'bcrypt';
 import config from '../utils/config';
 import jwt from 'jsonwebtoken';
-import { HTTP_STATUS_CODE } from '../utils/constants/HttpStatusCode';
-import { ApiError } from '../error/ApiError';
 
 enum UserStatus {
   USERNAME_EXISTING,
@@ -200,14 +201,10 @@ class UserService {
     }
   };
 
-  public generateToke = async (
-    email: string,
-    username: string,
-    passwordHashed: string
-  ): Promise<string> => {
+  public generateToke = async (payload: JwtObject): Promise<string> => {
     try {
       const token: string = await jwt.sign(
-        { email, username, passwordHashed },
+        { payload },
         String(config.tokenSecret)
       );
       return token;
@@ -222,10 +219,17 @@ class UserService {
 
   public verifyToken = async (token: string) => {
     try {
-      const result = await jwt.verify(token, String(config.tokenSecret));
+      const result = (await jwt.verify(
+        token,
+        String(config.tokenSecret)
+      )) as JwtObject;
       return result;
     } catch (error) {
-      console.log(error);
+      throw new ApiError(
+        `unable to verifyToken: ${(error as Error).message}`,
+        HTTP_STATUS_CODE.BAD_REQUEST,
+        'fila'
+      );
     }
   };
 }
